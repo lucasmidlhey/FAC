@@ -1,0 +1,96 @@
+.data
+	fsoma: .asciiz "ADD: "
+	fsub: .asciiz "\nSUB: "
+	fand: .asciiz "\nAND: "
+	for: .asciiz "\nOR: "
+	fxor: .asciiz "\nXOR: "
+	fsll: .asciiz "\nSLL(3): "
+	fsrl: .asciiz "\nSRL(1): "
+	linha: .asciiz "\n"
+.text
+main:
+	#la $a0, num1 #valor no registrador
+	li $v0, 5 #ler inteiro
+	syscall
+	move $t0, $v0 #mover registrador para t0
+	
+	
+	li $v0, 5 #ler inteiro
+	syscall
+	move $t1, $v0 #mover registrador para t1
+	
+	add $t2, $t1, $t0 # soma os dois valores em t2
+	
+	li $v0, 4
+	la $a0, fsoma
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t2 #mover para saida a0 (exibir)
+	syscall
+	
+	sub $t3, $t0, $t1 # soma os dois valores em t3
+	
+	li $v0, 4
+	la $a0, fsub
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t3 #mover para saida a0 (exibir)
+	syscall
+	
+	and $t4, $t1, $t0
+	
+	li $v0, 4
+	la $a0, fand
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t4 #mover para saida a0 (exibir)
+	syscall
+	
+	or $t5, $t1, $t0
+	
+	li $v0, 4
+	la $a0, for
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t5 #mover para saida a0 (exibir)
+	syscall
+	
+	xor $t6, $t1, $t0
+	
+	li $v0, 4
+	la $a0, fxor
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t6 #mover para saida a0 (exibir)
+	syscall
+	
+	sll $t7, $t0, 3
+	
+	li $v0, 4
+	la $a0, fsll
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t7 #mover para saida a0 (exibir)
+	syscall
+	
+	srl $t8, $t1, 1
+	
+	li $v0, 4
+	la $a0, fsrl
+	syscall
+	
+	li $v0,1  #  printar inteiro
+	move $a0, $t8 #mover para saida a0 (exibir)
+	syscall
+	
+	li $v0, 4
+	la $a0, linha
+	syscall
+	
+	

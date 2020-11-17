@@ -1,0 +1,211 @@
+# Bloco com data de quebra de linha
+
+.data
+
+	linha: .asciiz "\n"
+
+    vetor: .word 0
+
+.text
+
+
+
+main:
+
+    jal le_inteiro
+
+    jal le_numeros
+
+    jal maior_numero
+
+    jal quebra_linha
+
+    
+
+    lw  $s0, 0($sp)
+
+    lw  $t6, 0($sp)
+
+    li $v0, 10
+
+    syscall
+
+
+
+# Bloco para leitura de 1 inteiro. Quantidade de números a serem guardados no array.
+
+le_inteiro:
+
+    move $t0, $zero
+
+
+
+    loopwhile:
+
+        bgtz $t0, loopwhileend
+
+        nop
+
+        li $v0, 5
+
+	    syscall
+
+	    move $t0, $v0
+
+        j loopwhile
+
+        nop
+
+
+
+        loopwhile2:
+
+            bge $t0, 100001, loopwhileend
+
+            nop
+
+            li $v0, 5
+
+	        syscall
+
+	        move $t0, $v0
+
+            j loopwhile2
+
+            nop
+
+
+
+            loopwhileend:
+
+
+
+    jr $ra
+
+
+
+# Le a quantidade de inteiros que foi previamente digitado e guarda eles em um array.
+
+le_numeros:
+
+    move $t1, $zero
+
+    lw    $s0, $t0
+
+    li    $s4, 4
+
+    mul   $s4, $s4, $s0
+
+    addi  $s4, $s4, 4
+
+    sub   $sp, $sp, $s4
+
+    sw    $s0, ($sp)
+
+    move  $s1, $sp
+
+    la    $s2, vetor
+
+    li    $t2, 0
+
+
+
+    loopfor:
+
+        slt $t3, $t1, $t0
+
+        beq $t3, $zero, loopforend
+
+        nop
+
+        sll $t4, $t1, 2     
+
+        add $t5, $s0, $t4
+
+        lw $t6, 0($t5) 
+
+        li $v0, 5
+
+	    syscall
+
+	    move $t6, $v0
+
+        sw $t6, ($s1)
+
+        addi $t1, $t1, 1
+
+        j loopfor
+
+        nop
+
+
+
+        loopforend:
+
+
+
+    jr $ra
+
+
+
+# Bloco para pegar maior número dentro do array de inteiros.
+
+maior_numero:
+
+    move $t1, $zero
+
+    lw $t3, ($sp)
+
+    addi $t5, $sp, 4
+
+    lw $t0, ($sp)
+
+    li $v0, 1
+
+	move $a0, $t0
+
+    syscall
+
+    sll $t3, $t1, 2     
+
+    add $t4, $s0, $t3
+
+    lw $t5, 0($t4)
+
+    add $t6, $zero, $t5
+
+
+
+    loopwhile3:
+
+        beq $t1, $t0, loopwhileend2
+
+        nop        
+
+        addi $t1, $t1, 1
+
+        j loopwhile3
+
+        nop
+
+
+
+        loopwhileend2:
+
+
+
+    jr $ra
+
+
+
+# Bloco para imprimir uma quebra de linha.
+
+quebra_linha:
+
+    li $v0, 4
+
+	la $a0, linha
+
+	syscall
+
+    jr $ra

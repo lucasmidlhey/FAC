@@ -1,0 +1,59 @@
+.data
+	err: .asciiz "\nO modulo nao eh primo.\n"
+.text
+	main:
+		jal le_inteiro  # chama função para ler um inteiro _base
+		la  $t5, 0($v0)		   # carrega o inteiro lido em $t5
+		jal eh_primo 	# chama função que vê se o número é primo
+		jal imprime_saida	   # manda imprimir o numero lido
+		j   fim			   # encerra o programa
+				
+	le_inteiro:
+		li $v0, 5	# codigo para ler um inteiro
+		syscall		# executa a chamada do Sistema Operacional para ler
+		jr $ra		# volta para o lugar de onde foi chamado
+
+		
+	eh_primo:
+		ble $t5, 1, imprime_erro    # se o inteiro for 0 ele não é primo
+		bne $t5, 2, eh_par
+		li $t2, 3
+		li $t7, 2
+		div $t5, $t7
+		mflo $t1
+		ble $t2, $t1, while
+		jr $ra
+			
+	while: 
+		div $t5, $t2
+		mfhi $s3
+		beqz $s3, imprime_erro
+		add $t2, $t2, 2
+		li $t7, 2
+		div $t5, $t7
+		mflo $t1
+		ble $t2, $t1, while
+		jr $ra
+		
+	eh_par:
+		li $t7, 2
+		div $t5, $t7
+		mfhi $s3
+		beqz $s3, imprime_erro
+		jr $ra 
+		
+	imprime_erro:
+		li $v0, 4 # codigo para imprimir uma string
+		la $a0, err # carrega a string no registrador para imprimir
+		syscall # executa a chamada do Sistema Operacional para imprimir
+		jr $ra
+		
+	imprime_saida:
+		li $v0, 1	# codigo para imprimir um inteiro
+		la $a0, ($s3)	# $a0 é o registrador que irá conter o valor a ser impresso
+		syscall		# executa a chamado do Sistema Operacional para imprimir
+		jr $ra		# volta para o lugar de onde foi chamado
+		
+	fim:
+		li $v0, 10	# codigo para encerrar o programa
+		syscall		# executa a chamada do SO para encerrar

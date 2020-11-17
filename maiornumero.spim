@@ -1,0 +1,46 @@
+	.data
+	quebra: .ascii "\n"
+	
+	.text
+	
+main:
+	#read int
+	jal read_int
+	move $s0, $v0
+	
+	# calcular maior número
+	jal read_int
+	li $s2, 1 # $s4 = i = 1
+	move $s1, $v0 # resposta
+	jal loop
+	
+end_program:
+	#print int
+	li $v0, 1
+	move $a0, $s1
+	syscall
+	
+	li $v0, 4
+	la $a0, quebra
+	syscall
+	
+	li $v0, 10
+	syscall
+	
+	
+	
+read_int:
+	li $v0, 5
+	syscall
+	jr $ra
+	
+
+loop:
+	jal read_int
+	ble $v0, $s1, jump_change
+	move $s1, $v0 # resposta
+jump_change:
+	addi $s2, $s2, 1 # i++
+	beq $s2, $s0, end_program
+	j loop
+	

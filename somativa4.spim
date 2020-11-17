@@ -1,0 +1,107 @@
+
+## Lucas Midlhey - 130122254
+## Caue Mateus - 
+
+.data
+ print_entrada_invalida: .asciiz "Entradas invalidas\n"
+ print_nao_primo: .asciiz "O modulo nao eh primo\n"
+ resposta_valor: .asciiz "inverso = "
+ quebra_linha: .asciiz "\n"
+.text
+
+main: 
+	jal ler_inteiro #primeiro numero 
+	la $t5, 0($v0) #carrega no registrador t5
+	jal ler_inteiro
+	la $t6, 0($v0) #segundo numero
+	jal v_maior_1 # verifica se os numeros em t5 e t6 sao maiores que 1
+	jal verifica_primo
+	jal verifica_coprimo # REGRA DE COPRIMO t6 nao pode ser multiplo de t5
+	jal inverso_modular
+	
+ler_inteiro:
+	li $v0, 5 # ler inteiro
+	syscall
+	jr $ra	#voltar pra chamada da função 
+	
+verifica_primo:
+	bne $t5, 2, verifica_par
+	li $t2, 3 #carrega valor 3 em t2
+	li $t7, 2 #carrega valor 2 em t7
+	div $t5, $t7 #divide valor por t7
+	mflo $t1 #quaciente
+	ble $t2, $t1, while
+	jr $ra
+	
+while:
+	div $t5, $t2 #divide valor carregador por 3
+	mfhi $s3 #resto da divisao
+	beqz $s3, imprime_nao_primo #nao e primo
+	add $t2, $t2, 2 # adiciona 3+2+2...
+	li $t7, 2 #t7 recebe 2
+	div, $t5, $t7 #divisor t5/t7
+	mflo $t1 #quaciente da divisao para t1
+	ble $t2, $t1, while #nao encontrou divisor retorna função
+	jr $ra
+
+verifica_par:
+	li $t7, 2 #carrega o valor 2
+	div $t5, $t7 #divide valor lido por 2
+	mfhi $s3 #resto da divisao para s3
+	beqz $s3, imprime_nao_primo
+	jr $ra
+	
+
+verifica_coprimo:
+	div $t6, $t5
+	mfhi $t9
+	beq $t9, $zero, imprime_invalido
+	jr $ra
+
+inverso_modular:
+	div $t6, $t5 #divide modulo pelo primeiro valor  
+	mfhi $s4 #resto da divisao 1
+	li $s7, 1 #contador 1
+	jal while2
+
+while2:
+	mul $t4, $s4, $s7 #t4 = resto da divisao * contador 1
+	div $t4, $t5 # divide t4 pelo modulo 
+	mfhi $t3 # pega o resto 
+	beq $t3, 1, imprime_resultado #resto == 1 resultado se nao
+	add $s7, $s7, 1 #contador +1
+	jal while2 #volta funçãos
+
+	
+v_maior_1:
+	ble $t5, 1, imprime_invalido
+	ble $t6, 1, imprime_invalido
+	jr $ra
+
+imprime_nao_primo: 
+	li $v0, 4 
+	la $a0, print_nao_primo
+	syscall
+	jal fim
+	
+imprime_invalido:
+	li $v0, 4 
+	la $a0 print_entrada_invalida
+	syscall
+	jal fim
+
+fim:
+	li   $v0, 10          # system call for exit
+	syscall 
+	
+imprime_resultado:
+	li $v0, 4
+	la $a0, resposta_valor
+	syscall 
+	li $v0, 1
+	la $a0, ($s7)
+	syscall
+	li $v0, 4
+	la $a0, quebra_linha
+	syscall 
+	jal fim

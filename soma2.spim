@@ -1,0 +1,23 @@
+.data
+	Hello: .asciiz "\n"
+	soma: .asciiz "ADD: "
+.text
+main:
+	#la $a0, num1 #valor no registrador
+	li $v0, 5 #ler inteiro
+	syscall
+	move $t0, $v0 #mover registrador para t0
+	#la $a0, num2  #valor no registrador
+	li $v0, 5 #ler inteiro
+	syscall
+	li $v0, 4
+	la $a0, soma
+	syscall
+	move $t1, $v0 #mover registrador para t1
+	add $t2, $t1, $t0 # soma os dois valores em t2
+	li $v0,1  #  printar inteiro
+	move $a0, $t2 #mover para saida a0 (exibir)
+	syscall
+	li $v0, 4
+	la $a0, Hello
+	syscall
